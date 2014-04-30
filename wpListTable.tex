@@ -1,0 +1,194 @@
+\documentclass[a4paper, 16pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[MeX]{polski}
+\usetheme{Warsaw}
+\usecolortheme{structure}
+\begin{document}
+	\title{WP\_List\_Table}
+	\author{Maciek minimal2 Dmowski\\ http://dmowsk.it}
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	\begin{frame}
+		\frametitle{Agenda}
+		\tableofcontents
+	\end{frame}
+	\section{Disclaimer!}
+		\begin{frame}
+			\frametitle{Disclaimer!}
+			{\color{red} This class's access is marked as private. That means it is not intended for use by plugin and theme developers as it is subject to change without warning in any future WordPress release. If you would still like to make use of the class, you should make a copy to use and distribute with your own project, or else use it at your own risk.}
+		\end{frame}
+	\section{Szybki rzut oka na klasę}
+			\begin{frame}
+				\frametitle{prepare\_items}
+				Wewnątrz tej metody pobieramy i wstępnie filtrujemy dane.\\
+				Tutaj powinno nastąpić przypisanie pobranych danych do pola \textbf{\$items}, oraz ustalenie warunków podziału wyników na strony (o tym za chwilę).
+			\end{frame}
+			\begin{frame}
+				\frametitle{set\_pagination\_args}
+				Ustawia kryteria podziału wyników na strony\\
+				Najczęściej wywoływana wewnątrz prepare\_items
+				\begin{exampleblock}{Parametr metody}
+			        array(\\
+	            	\hspace{0.5cm}'total\_items' => (\$total\_items > 0) \? \$total\_items : 1,\\
+	            	\hspace{0.5cm}'per\_page' => \$items\_per\_page, \\
+	            	\hspace{0.5cm}'total\_pages' => ceil(\$total\_items/\$items\_per\_page), \\
+	        		);
+        		\end{exampleblock}
+			\end{frame}
+			\begin{frame}
+				\frametitle{search\_box}
+				Metoda odpowiadające za renderowanie pola wyszukiwania.\\
+				\begin{alertblock}
+					{UWAGA!} domyślnie generowanie jest jedynie przycisk i pole formularza.
+				\end{alertblock}
+				\begin{alertblock}
+					{UWAGA 2!} domyślnie atrybut name dla pola wyszukiwania to \textbs{s}
+				\end{alertblock}
+			\end{frame}
+			\begin{frame}
+				\frametitle{get\_bulk\_actions}
+				Metoda zwracająca dostępne akcje dla wielu pozycji. \\
+				Wynikiem jej wywołania powinna byc tablica asocjacyjna w postaci:
+				\begin{block}{Pojedyńcza para klucz => wartość}
+					'slug' => 'display name'
+				\end{block}
+				\begin{exampleblock}{Przykładowy wynik wywołania metody get\_bulk\_actions}
+					array(\\
+            		\hspace{0.5cm}'delete' => \_\_('Delete'),\\
+            		\hspace{0.5cm}'deactivate' => \_\_('Deactivate'),\\
+            		\hspace{0.5cm}'activate' => \_\_('Activate'),\\
+            		\hspace{0.5cm}'send\_email' => \_\_('Send message'),\\
+        			);
+    			\end{exampleblock}
+			\end{frame}
+			\begin{frame}
+				\frametitle{process\_bulk\_actions}
+				\begin{exampleblock}{Przykład dla akcji delete}
+					if( 'delete'===\$this->current\_action() ) \{\\
+	                \hspace{0.5cm}// Example code\\
+	                \}
+                \end{exampleblock}
+                \begin{block}{\$this->currnet\_action()}
+                	Obsługuje parametry action oraz action2
+                \end{block}
+            \end{frame}
+            \begin{frame}
+            	\frametitle{get\_table\_classes}
+            	Ta metoda powinna zwrócić tablicę zawierającą dodatkowe klasy CSS o które wzbogacona zostanie wyświetlana tabela.
+            	\begin{exampleblock}{Przykład}
+            		array('table-striped', 'table-hover')
+        		\end{exampleblock}
+            \end{frame}
+			\begin{frame}
+				\frametitle{row\_actions}
+				Przyjmuje tablicę asocjacyjną w postaci:
+				\begin{exampleblock}{Tablica akcji}
+					array(\\
+					\hspace{0.5cm}<klasa CSS> => <link>\\
+					\hspace{0.5cm}<klasa CSS> => <link>\\
+					\hspace{0.5cm}// ...\\
+					);
+				\end{exampleblock}
+				oraz wartość boolean, która ustawiona na \textbf{true} powoduje, że linki wyświetlane będą dla każdej pozycji.
+			\end{frame}
+			\begin{frame}
+				\frametitle{get\_columns}
+				Definiuje zbiór kolumn do wyświetlenia w tabeli.
+				\begin{exampleblock}{Przykład}
+					array(\\
+					\hspace{0.5cm}'cb' => '<input type="checkbox" />',\\
+            		\hspace{0.5cm}'user\_email' => 'E-mail',\\
+            		\hspace{0.5cm}'user\_registered'    => \_\_('Registration date'),\\
+            		\hspace{0.5cm}'user_status'   => \_\_('Status'),\\
+        			);
+				\end{exampleblock}
+			\end{frame}
+			% \begin{frame}
+			% 	\frametitle{get\_sortable\_columns}
+			% 	Ustala które kolumny mogą byc sortowane.
+			% 	\begin{exampleblock}{Przykład}
+
+			% 	\end{exampleblock}
+			% \end{frame}
+			\begin{frame}
+				\frametitle{column\_default}
+				Ta metoda definiuje sposób w jaki podczas procesu wyświetlania będą pobierane dane dla poszczególnych kolumn.
+			\end{frame}
+			\begin{frame}
+				\frametitle{column\_\$name}
+				Ustala wartości dla konkretnej kolumny.
+			\end{frame}
+	\section{Tabelki w backend'zie}
+		\begin{frame}
+			\frametitle{Backend: proste i przyjemne}
+			\begin{figure}
+				\centering
+				\includegraphics[height=5cm]{backend.png}
+				% \caption{Cats Faces}
+			\end{figure}
+		\end{frame}
+	\section{Frontend}
+		\subsection{Problemy}
+			\begin{frame}
+				\frametitle{Problemy}
+				\begin{columns}
+					\begin{column}{0.33\textwidth}
+						\begin{itemize}
+							\item{\color{red}Zależności}\pause
+							\item{CSS}\pause
+							\item{\color{red}JavaScript}\pause
+							\item{Konflikty nazw}\pause
+						\end{itemize}
+					\end{column}
+					\begin{column}{0.66\textwidth}
+						\begin{figure}
+							% \centering
+							\includegraphics[height=2.5cm]{frontend_no_css.png}
+							% \caption{Cats Faces}
+						\end{figure}
+					\end{column}
+				\end{columns}
+				\pause
+				\begin{figure}
+				\centering
+				\includegraphics[height=2.6cm]{frontend_with_css1.png}
+				% \caption{Cats Faces}
+			\end{figure}
+			\end{frame}
+		\subsection{Rozwiązanie}
+			\begin{frame}
+				\frametitle{WP\_List\_Table\_Bootstrap}
+				\begin{alertblock}{ALPHA}
+					Uwaga, prezentowany kod jest we wczesnym stadium rozwoju!
+				\end{alertblock}
+				Moja wariacja na temat omawianej klasy przystosowana do wyświetlania z Bootstrapem 3
+			\end{frame}
+	\section{Demo}
+		\begin{frame}
+			\frametitle{Demo}
+			\begin{center}
+				Zapraszam na pulpit obok :-)
+			\end{center}
+		\end{frame}
+	\section{Materiały}
+		\begin{frame}
+			\frametitle{Więcej informacji}
+			\begin{itemize}
+				\item{\href{http://codex.wordpress.org/Class_Reference/WP_List_Table}{codex.wordpress.org/Class\_Reference/WP\_List\_Table}}
+				\item{\href{http://wp.smashingmagazine.com/2011/11/03/native-admin-tables-wordpress/}{wp.smashingmagazine.com/2011/11/03/native-admin-tables-wordpress/}}
+				\item{\href{http://wordpress.org/plugins/custom-list-table-example/}{http://wordpress.org/plugins/custom-list-table-example/}}
+				\item{\color{gray}\href{http://github.com/minimal2/WP_List_Table_Bootstrap}{github.com/minimal2/WP\_List\_Table\_Bootstrap}}
+			\end{itemize}
+		\end{frame}
+	\section{Pytania}
+		\begin{frame}
+			\frametitle{Koniec!}
+			\begin{figure}
+				\centering
+				\includegraphics[height=6cm]{faces.jpg}
+				% \caption{Cats Faces}
+			\end{figure}
+		\end{frame}
+\end{document}
